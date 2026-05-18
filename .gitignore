@@ -1,0 +1,8 @@
+dataset/
+models/
+__pycache__/
+*.pyc
+*.pth
+*.pt
+.env
+venv/
