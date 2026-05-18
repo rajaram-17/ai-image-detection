@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Authenticity Detector</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 AI Image Authenticity Detector</h1>
+            <p class="subtitle">Upload an image to check if it's AI-generated or real using Vision Transformer</p>
+        </header>
+
+        <div class="upload-section">
+            <form action="/predict" method="post" enctype="multipart/form-data">
+                <div class="file-input-wrapper">
+                    <input type="file" name="file" id="file" accept="image/*" required>
+                    <label for="file" class="file-label">
+                        <span class="file-icon">📁</span>
+                        <span id="file-name">Choose an image file</span>
+                    </label>
+                </div>
+                <button type="submit" class="btn-submit">Analyze Image</button>
+            </form>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-error">
+            <strong>Error:</strong> {{ error }}
+        </div>
+        {% endif %}
+
+        {% if result %}
+        <div class="results-section">
+            <h2>Analysis Results</h2>
+            
+            <div class="result-card">
+                <div class="image-preview">
+                    <img src="{{ result.image_url }}" alt="Uploaded Image">
+                </div>
+                
+                <div class="prediction-details">
+                    <div class="prediction-label {% if result.label == 'Real' %}label-real{% else %}label-ai{% endif %}">
+                        <span class="label-text">{{ result.label }}</span>
+                    </div>
+                    
+                    <div class="confidence-section">
+                        <p class="confidence-text">Confidence Score</p>
+                        <div class="confidence-bar-container">
+                            <div class="confidence-bar" id="confidence-bar-fill"></div>
+                        </div>
+                        <p class="confidence-value">{{ result.confidence }}%</p>
+                    </div>
+                    
+                    <div class="interpretation">
+                        {% if result.label == 'Real' %}
+                            <p>✓ This image appears to be <strong>authentic</strong> and not AI-generated.</p>
+                        {% else %}
+                            <p>⚠ This image appears to be <strong>AI-generated</strong>.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <button onclick="location.href='/'" class="btn-secondary">Analyze Another Image</button>
+        </div>
+        {% endif %}
+
+        <div class="info-section">
+            <h3>How It Works</h3>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">🤖</div>
+                    <h4>Vision Transformer</h4>
+                    <p>Uses state-of-the-art ViT architecture trained on thousands of images to detect AI-generated content.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🎯</div>
+                    <h4>High Accuracy</h4>
+                    <p>Deep learning model analyzes subtle patterns and artifacts invisible to the human eye.</p>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">⚡</div>
+                    <h4>Fast Results</h4>
+                    <p>Get instant predictions with confidence scores for each uploaded image.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Powered by Vision Transformer (ViT) & PyTorch | Built with Flask</p>
+        </footer>
+    </div>
+
+    <script>
+        // Display selected filename
+        document.getElementById('file').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'Choose an image file';
+            document.getElementById('file-name').textContent = fileName;
+        });
+
+        // Preview image before upload
+        document.getElementById('file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    // You can add preview functionality here if needed
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    </script>
+</body>
+</html>
